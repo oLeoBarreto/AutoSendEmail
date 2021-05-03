@@ -1,0 +1,30 @@
+object DmDados: TDmDados
+  OldCreateOrder = False
+  Height = 285
+  Width = 366
+  object FDQuery1: TFDQuery
+    Left = 200
+    Top = 128
+  end
+  object FDConnection: TFDConnection
+    Params.Strings = (
+      'Port=3050'
+      'Password= masterkey'
+      'User_Name=SYSDBA'
+      'Database=C:\DBfirebirdAULA\DATA.FDB'
+      'Server=localhost'
+      'DriverID=FB')
+    Left = 112
+    Top = 128
+  end
+  object FDTransaction: TFDTransaction
+    Connection = FDConnection
+    Left = 112
+    Top = 72
+  end
+  object FDUpdateSQL1: TFDUpdateSQL
+    Connection = FDConnection
+    Left = 200
+    Top = 72
+  end
+end

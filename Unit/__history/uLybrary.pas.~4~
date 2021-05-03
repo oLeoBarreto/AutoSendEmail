@@ -1,0 +1,23 @@
+unit uLybrary;
+
+interface
+  uses IniFiles, Vcl.Forms, System.SysUtils, FireDAC.Comp.Client,
+  System.Classes, frxClass, Winapi.Windows, uFormMain;
+
+  procedure autoSend;
+
+
+implementation
+
+procedure autoSend;
+begin
+  try
+    begin
+      Email(mail_username, mail_password, mail_to, mail_subject, mail_body);
+    end;
+  except
+
+  end;
+end;
+
+end.
