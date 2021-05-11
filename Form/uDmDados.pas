@@ -8,16 +8,20 @@ uses
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.FB,
   FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.Client, Data.DB,
-  FireDAC.Comp.DataSet;
+  FireDAC.Comp.DataSet, uLybrary, Vcl.Forms, Vcl.Dialogs;
+
 
 type
   TDmDados = class(TDataModule)
-    FDConnection: TFDConnection;
+    FD_Connect: TFDConnection;
+    procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
+    procedure loadDB;
   public
     { Public declarations }
   end;
+
 
 var
   DmDados: TDmDados;
@@ -27,5 +31,30 @@ implementation
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
+
+procedure TDmDados.loadDB;
+begin
+  try
+    FD_Connect.Params.Clear;
+    FD_Connect.Params.Add('User_Name=sysdba');
+    FD_Connect.Params.Add('Password=masterkey');
+    FD_Connect.Params.Add('Protocol=TCPIP');
+    FD_Connect.Params.Add('Server=' + GetValueIni(ExtractFilePath(Application.ExeName) + 'config.ini', 'CONFIGURAR', 'SERVER'));
+    FD_Connect.Params.Add('CharacterSet=utf8');
+    FD_Connect.Params.Add('Database=' + GetValueIni(ExtractFilePath(Application.ExeName) + 'config.ini', 'CONFIGURAR', 'LOCAL_DB'));
+    FD_Connect.Params.Add('DriverID=FB');
+    FD_Connect.Connected := True;
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Error!');
+    end;
+  end;
+end;
+
+procedure TDmDados.DataModuleCreate(Sender: TObject);
+begin
+  loadDB;
+end;
 
 end.

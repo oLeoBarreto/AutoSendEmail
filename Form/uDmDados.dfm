@@ -1,8 +1,8 @@
 object DmDados: TDmDados
   OldCreateOrder = False
-  Height = 285
+  Height = 313
   Width = 366
-  object FDConnection: TFDConnection
+  object FD_Connect: TFDConnection
     Params.Strings = (
       'Port=3050'
       'Password= masterkey'
@@ -10,7 +10,8 @@ object DmDados: TDmDados
       'Database=C:\DBfirebirdAULA\DATA.FDB'
       'Server=localhost'
       'DriverID=FB')
-    Left = 184
+    Connected = True
+    Left = 176
     Top = 96
   end
 end

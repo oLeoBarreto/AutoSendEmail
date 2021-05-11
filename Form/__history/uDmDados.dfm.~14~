@@ -1,0 +1,97 @@
+object DmDados: TDmDados
+  OldCreateOrder = False
+  Height = 313
+  Width = 366
+  object FDConnection: TFDConnection
+    Params.Strings = (
+      'Port=3050'
+      'Password= masterkey'
+      'User_Name=SYSDBA'
+      'Database=C:\DBfirebirdAULA\DATA.FDB'
+      'Server=localhost'
+      'DriverID=FB')
+    Connected = True
+    Left = 176
+    Top = 96
+  end
+  object FDQuerySale: TFDQuery
+    Connection = FDConnection
+    Transaction = FDTransactionSale
+    SQL.Strings = (
+      'SELECT  id_sales,'
+      '        billed,'
+      '        bill_date,'
+      '        id_clients'
+      '        '
+      'FROM sales   S'
+      '     ')
+    Left = 94
+    Top = 168
+    object FDQuerySaleID_SALES: TIntegerField
+      FieldName = 'ID_SALES'
+      Origin = 'ID_SALES'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object FDQuerySaleBILLED: TWideStringField
+      FieldName = 'BILLED'
+      Origin = 'BILLED'
+      Size = 1
+    end
+    object FDQuerySaleBILL_DATE: TDateField
+      FieldName = 'BILL_DATE'
+      Origin = 'BILL_DATE'
+    end
+    object FDQuerySaleID_CLIENTS: TIntegerField
+      FieldName = 'ID_CLIENTS'
+      Origin = 'ID_CLIENTS'
+    end
+  end
+  object FDTransactionSale: TFDTransaction
+    Connection = FDConnection
+    Left = 174
+    Top = 168
+  end
+  object DS_Sale: TDataSource
+    DataSet = FDQuerySale
+    Left = 254
+    Top = 168
+  end
+  object FDQueryClient: TFDQuery
+    Connection = FDConnection
+    Transaction = FDTransactionClients
+    SQL.Strings = (
+      'SELECT id_clients,'
+      '       email,'
+      '       full_name'
+      'FROM clients')
+    Left = 96
+    Top = 224
+    object FDQueryClientEMAIL: TIntegerField
+      FieldName = 'EMAIL'
+      Origin = 'ID_CLIENTS'
+      Required = True
+    end
+    object FDQueryClientFULL_NAME: TWideStringField
+      FieldName = 'FULL_NAME'
+      Origin = 'FULL_NAME'
+      Size = 80
+    end
+    object FDQueryClientID_CLIENTS: TIntegerField
+      FieldName = 'ID_CLIENTS'
+      Origin = 'ID_CLIENTS'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+  end
+  object FDTransactionClients: TFDTransaction
+    Connection = FDConnection
+    Left = 176
+    Top = 224
+  end
+  object DS_Clients: TDataSource
+    DataSet = FDQueryClient
+    Left = 256
+    Top = 224
+  end
+end

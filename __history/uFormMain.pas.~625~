@@ -1,0 +1,234 @@
+unit uFormMain;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, IdIOHandler,
+  IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdComponent,
+  IdTCPConnection, IdTCPClient, IdExplicitTLSClientServerBase, IdMessageClient,
+  IdSMTPBase, IdSMTP, IdBaseComponent, IdMessage, uDmDados, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.Client, Data.DB, FireDAC.Comp.DataSet, System.DateUtils, Registry,
+  Vcl.DBCtrls, IdSSLOpenSSL, uLybrary, System.SyncObjs;
+
+type
+  TFormMain = class(TForm)
+    IdMessage1: TIdMessage;
+    IdSMTP1: TIdSMTP;
+    Panel2: TPanel;
+    Edt_subject: TEdit;
+    Btn_send: TButton;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Edt_body: TMemo;
+    IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
+    FDQuerySale: TFDQuery;
+    FDTransactionSale: TFDTransaction;
+    DS_Sale: TDataSource;
+    FDQueryClient: TFDQuery;
+    FDTransactionClients: TFDTransaction;
+    DS_Clients: TDataSource;
+    FDQueryClientID_CLIENTS: TIntegerField;
+    FDQueryClientEMAIL: TWideStringField;
+    Edt_to: TListBox;
+    FDQuerySaleEMAIL: TWideStringField;
+    procedure Btn_sendClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+    procedure autoSend;
+    procedure Email(totarget, subject, body: string);
+    procedure LastDay(date: TDate);
+    procedure runBackground(const allUsers: boolean = False);
+    function getEmail: string;
+  public
+    { Public declarations }
+  end;
+
+var
+  FormMain: TFormMain;
+  mail_to: string;
+  mail_subject: string;
+  mail_body: string;
+  Reg: TRegistry;
+
+implementation
+
+{$R *.dfm}
+
+{ TForm1 }
+procedure TFormMain.FormCreate(Sender: TObject);
+begin
+  runBackground(True);
+  LastDay(Date);
+end;
+
+function TFormMain.getEmail: string;
+var
+mailBill: array of string;
+matriz: array of integer;
+idBill: integer;
+i,rec: integer;
+begin
+  FDQuerySale.Close;
+  FDQuerySale.SQL.Clear;
+  FDQuerySale.SQL.Add('SELECT C.email FROM sales S JOIN clients C on C.id_clients = S.id_clients WHERE S.billed = ''N'' AND C.id_clients > 0');
+  FDQuerySale.Open;
+  FDQuerySale.First;
+  while not FDQuerySale.Eof do
+  begin
+    SetLength(mailBill, Succ(Length(mailBill)));
+    mailBill[High(mailBill)] := FDQuerySale.FieldByName('email').AsString;
+    FDQuerySale.Next;
+  end;
+
+  mail_to :=  mailBill[High(mailBill)];
+  mail_subject := 'TESTE';
+  mail_body := 'TESTE';
+
+  {
+  for I := 0 to Pred(Length(mailBill)) do
+  begin
+    TThread.Queue(TThread.CurrentThread,
+      procedure
+      begin
+        Email(mail_to, mail_subject, mail_body);
+      end)
+  end;
+  }
+end;
+
+
+procedure TFormMain.Btn_sendClick(Sender: TObject);
+begin
+  getEmail;
+  //autoSend;
+end;
+
+procedure TFormMain.autoSend;
+var
+email: string;
+mailBill: array of string;
+matriz: array of integer;
+i: integer;
+rec: integer;
+begin
+  i := 0;
+  rec := FDQuerySale.RecordCount;
+  email := FDQueryClient.RecordCount.ToString;
+
+  SetLength(matriz, Length(matriz) + 1);
+  matriz[Length(matriz) - 1] := rec;
+
+  SetLength(mailBill, Length(mailBill) + 1);
+  mailBill[Length(mailBill) - 1] := email;
+
+  FDQuerySale.Close;
+  FDQuerySale.SQL.Clear;
+  FDQuerySale.SQL.Add('SELECT id_clients,billed FROM sales  WHERE billed = ''N'' ');
+  FDQuerySale.Open();
+  while not (FDQuerySale.Eof) do
+  begin
+    matriz[i] := FDQuerySale.FieldByName('id_clients').AsInteger;
+    FDQuerySale.NextRecordSet;
+    inc(i);
+  end;
+  FDQuerySale.Close;
+
+  FDQueryClient.Close;
+  FDQueryClient.SQL.Clear;
+  FDQueryClient.SQL.Add('SELECT id_clients, email FROM clients WHERE id_clients = :vId_client');
+  FDQueryClient.ParamByName('vId_client').Value := matriz[i];
+  FDQueryClient.Open();
+  mailBill[i] := FDQueryClient.FieldByName('EMAIL').AsString;
+  FDQueryClient.NextRecordSet;
+  FDQueryClient.Close;
+
+  mail_to := mailBill[i];
+  mail_subject := 'Teste';
+  mail_body := 'Teste';
+
+  {
+  for I := Low(matriz) to High(matriz) do
+  begin
+    try
+      Email(mail_to, mail_subject, mail_body);
+      ShowMessage('Email enviado');
+    except
+      ShowMessage('Email nao enviado');
+    end;
+  end;
+  }
+end;
+
+procedure TFormMain.LastDay(date: TDate);
+var
+  lastDay: TDateTime;
+  month: Word;
+begin
+  lastDay := EndOfTheMonth(Date);
+  month := MonthOf(Date);
+  if date = lastDay then
+  begin
+    autoSend;
+  end;
+end;
+
+procedure TFormMain.Email(totarget, subject, body: string);
+var
+  Data: TIdmessage;
+  SMTP: TIdSMTP;
+  SSL: TIdSSLIOHandlerSocketOpenSSL;
+begin
+  SMTP := TIdSMTP.Create(nil);
+  DATA := TIdMessage.Create(nil);
+  SSL := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
+
+  SSL.SSLOptions.Method := sslvTLSv1;
+  SSL.SSLOptions.Mode := sslmUnassigned;
+  SSL.SSLOptions.VerifyMode := [];
+  SSL.SSLOptions.VerifyDepth := 0;
+
+  DATA.From.Address := 'Leonardo Barreto';
+  DATA.Recipients.EMailAddresses := totarget;
+  DATA.subject := subject;
+  DATA.body.text := body;
+
+  SMTP.IOHandler := SSL;
+  SMTP.Host := 'smtp.gmail.com';
+  SMTP.Port := 587;
+  SMTP.username := 'leobcontato@gmail.com';
+  SMTP.password := 'Leo1br115';
+  SMTP.UseTLS := utUseExplicitTLS;
+
+  SMTP.Connect;
+  try
+    SMTP.Send(DATA);
+  finally
+    SMTP.Disconnect;
+  end;
+
+  SMTP.Free;
+  DATA.Free;
+  SSL.Free;
+end;
+
+procedure TFormMain.runBackground(const allUsers: boolean = False);
+begin
+  Reg := TRegistry.Create();
+  try
+    Reg.RootKey := byte(allUsers)+$80000001;
+    if Reg.OpenKey('SoftwareMicrosoftWindowsCurrentVersionRun',True) then
+    begin
+      Reg.CloseKey;
+    end;
+  finally
+    Reg.Free;
+  end;
+end;
+
+end.

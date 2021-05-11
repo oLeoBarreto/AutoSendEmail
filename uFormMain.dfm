@@ -2,8 +2,8 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'Email'
-  ClientHeight = 249
-  ClientWidth = 257
+  ClientHeight = 240
+  ClientWidth = 253
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,13 +16,13 @@ object FormMain: TFormMain
   PixelsPerInch = 96
   TextHeight = 13
   object Panel2: TPanel
-    Left = 0
-    Top = 0
-    Width = 257
+    AlignWithMargins = True
+    Left = 3
+    Top = 3
+    Width = 247
     Height = 192
     Align = alTop
     TabOrder = 0
-    ExplicitWidth = 258
     object Label3: TLabel
       Left = 32
       Top = 6
@@ -53,36 +53,39 @@ object FormMain: TFormMain
     object Edt_subject: TEdit
       Left = 32
       Top = 60
-      Width = 193
+      Width = 185
       Height = 21
       TabOrder = 0
       Text = 'Contas a pagar'
     end
-    object Edt_to: TEdit
-      Left = 32
-      Top = 19
-      Width = 193
-      Height = 21
-      TabOrder = 1
-      Text = 'leo.barreto11.br@gmail.com'
-    end
-    object Edt_body: TEdit
+    object Edt_body: TMemo
       Left = 32
       Top = 107
-      Width = 193
-      Height = 75
-      TabOrder = 2
-      Text = 'Por favor! entre em contato conosco para entender o transtorno'
+      Width = 185
+      Height = 78
+      Lines.Strings = (
+        'Edt_body')
+      ParentShowHint = False
+      ShowHint = False
+      TabOrder = 1
     end
   end
   object Btn_send: TButton
-    Left = 32
-    Top = 208
-    Width = 193
+    Left = 35
+    Top = 201
+    Width = 185
     Height = 33
     Caption = 'Send'
     TabOrder = 1
     OnClick = Btn_sendClick
+  end
+  object Edt_to: TListBox
+    Left = 35
+    Top = 22
+    Width = 185
+    Height = 23
+    ItemHeight = 13
+    TabOrder = 2
   end
   object IdMessage1: TIdMessage
     AttachmentEncoding = 'UUE'
@@ -95,13 +98,13 @@ object FormMain: TFormMain
     Recipients = <>
     ReplyTo = <>
     ConvertPreamble = True
-    Left = 328
-    Top = 160
+    Left = 512
+    Top = 72
   end
   object IdSMTP1: TIdSMTP
     SASLMechanisms = <>
-    Left = 328
-    Top = 112
+    Left = 456
+    Top = 72
   end
   object IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL
     MaxLineAction = maException
@@ -110,56 +113,74 @@ object FormMain: TFormMain
     SSLOptions.Mode = sslmUnassigned
     SSLOptions.VerifyMode = []
     SSLOptions.VerifyDepth = 0
-    Left = 328
-    Top = 64
+    Left = 392
+    Top = 72
   end
-  object FDQuery: TFDQuery
-    Connection = DmDados.FDConnection
-    Transaction = FDTransaction
+  object FDQuerySale: TFDQuery
+    Connection = DmDados.FD_Connect
+    Transaction = FDTransactionSale
     SQL.Strings = (
-      'SELECT  id_sales,'
-      '        billed,'
-      '        bill_date,'
-      '        id_clients'
-      'FROM sales'
-      'WHERE id_sales =: id_sales')
-    Left = 296
-    Top = 8
-    object FDQueryID_SALES: TIntegerField
-      FieldName = 'ID_SALES'
-      Origin = 'ID_SALES'
+      'SELECT C.email'
+      'FROM sales S'
+      'JOIN clients C on C.id_clients = S.id_clients'
+      'WHERE S.billed = '#39'N'#39
+      '  AND C.id_clients > 0')
+    Left = 46
+    Top = 288
+    object FDQuerySaleEMAIL: TWideStringField
+      FieldName = 'EMAIL'
+      Origin = 'EMAIL'
+      Required = True
+      Size = 120
+    end
+  end
+  object FDTransactionSale: TFDTransaction
+    Connection = DmDados.FD_Connect
+    Left = 126
+    Top = 288
+  end
+  object DS_Sale: TDataSource
+    DataSet = FDQuerySale
+    Left = 206
+    Top = 288
+  end
+  object FDQueryClient: TFDQuery
+    Connection = DmDados.FD_Connect
+    Transaction = FDTransactionClients
+    SQL.Strings = (
+      
+        'SELECT id_clients,email FROM clients WHERE id_clients =:id_clien' +
+        'ts')
+    Left = 48
+    Top = 344
+    ParamData = <
+      item
+        Name = 'ID_CLIENTS'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+    object FDQueryClientID_CLIENTS: TIntegerField
+      FieldName = 'ID_CLIENTS'
+      Origin = 'ID_CLIENTS'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
       Required = True
     end
-    object FDQueryBILLED: TWideStringField
-      FieldName = 'BILLED'
-      Origin = 'BILLED'
-      Size = 1
-    end
-    object FDQueryEMAIL: TWideStringField
-      AutoGenerateValue = arDefault
+    object FDQueryClientEMAIL: TWideStringField
       FieldName = 'EMAIL'
       Origin = 'EMAIL'
-      ProviderFlags = []
-      ReadOnly = True
+      Required = True
       Size = 120
     end
-    object FDQueryFULL_NAME: TWideStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'FULL_NAME'
-      Origin = 'FULL_NAME'
-      ProviderFlags = []
-      ReadOnly = True
-      Size = 80
-    end
-    object FDQueryBILL_DATE: TDateField
-      FieldName = 'BILL_DATE'
-      Origin = 'BILL_DATE'
-    end
   end
-  object FDTransaction: TFDTransaction
-    Connection = DmDados.FDConnection
-    Left = 368
-    Top = 8
+  object FDTransactionClients: TFDTransaction
+    Connection = DmDados.FD_Connect
+    Left = 128
+    Top = 344
+  end
+  object DS_Clients: TDataSource
+    DataSet = FDQueryClient
+    Left = 208
+    Top = 344
   end
 end
