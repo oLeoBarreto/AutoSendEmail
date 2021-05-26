@@ -2,8 +2,8 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'Email'
-  ClientHeight = 240
-  ClientWidth = 253
+  ClientHeight = 238
+  ClientWidth = 249
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,14 +12,15 @@ object FormMain: TFormMain
   Font.Style = []
   OldCreateOrder = False
   Position = poDesktopCenter
-  OnCreate = FormCreate
+  WindowState = wsMinimized
+  OnActivate = FormActivate
   PixelsPerInch = 96
   TextHeight = 13
   object Panel2: TPanel
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 247
+    Width = 243
     Height = 192
     Align = alTop
     TabOrder = 0
@@ -56,7 +57,7 @@ object FormMain: TFormMain
       Width = 185
       Height = 21
       TabOrder = 0
-      Text = 'Contas a pagar'
+      Text = 'Aviso de vencimento'
     end
     object Edt_body: TMemo
       Left = 32
@@ -64,10 +65,24 @@ object FormMain: TFormMain
       Width = 185
       Height = 78
       Lines.Strings = (
-        'Edt_body')
+        'Prezado Cliente, como costa em '
+        'nosso registro, sua d'#237'vida ainda '
+        'est'#225' em aberto,'
+        'aconselhamos ao senhor(a) que '
+        'entre em contato conosco para '
+        'entender o acontecido.'
+        '  ')
       ParentShowHint = False
       ShowHint = False
       TabOrder = 1
+    end
+    object Edt_to: TEdit
+      Left = 32
+      Top = 21
+      Width = 185
+      Height = 21
+      TabOrder = 2
+      TextHint = 'Devedores(a)'
     end
   end
   object Btn_send: TButton
@@ -78,14 +93,6 @@ object FormMain: TFormMain
     Caption = 'Send'
     TabOrder = 1
     OnClick = Btn_sendClick
-  end
-  object Edt_to: TListBox
-    Left = 35
-    Top = 22
-    Width = 185
-    Height = 23
-    ItemHeight = 13
-    TabOrder = 2
   end
   object IdMessage1: TIdMessage
     AttachmentEncoding = 'UUE'
@@ -104,7 +111,7 @@ object FormMain: TFormMain
   object IdSMTP1: TIdSMTP
     SASLMechanisms = <>
     Left = 456
-    Top = 72
+    Top = 48
   end
   object IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL
     MaxLineAction = maException
@@ -143,44 +150,5 @@ object FormMain: TFormMain
     DataSet = FDQuerySale
     Left = 206
     Top = 288
-  end
-  object FDQueryClient: TFDQuery
-    Connection = DmDados.FD_Connect
-    Transaction = FDTransactionClients
-    SQL.Strings = (
-      
-        'SELECT id_clients,email FROM clients WHERE id_clients =:id_clien' +
-        'ts')
-    Left = 48
-    Top = 344
-    ParamData = <
-      item
-        Name = 'ID_CLIENTS'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = Null
-      end>
-    object FDQueryClientID_CLIENTS: TIntegerField
-      FieldName = 'ID_CLIENTS'
-      Origin = 'ID_CLIENTS'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-      Required = True
-    end
-    object FDQueryClientEMAIL: TWideStringField
-      FieldName = 'EMAIL'
-      Origin = 'EMAIL'
-      Required = True
-      Size = 120
-    end
-  end
-  object FDTransactionClients: TFDTransaction
-    Connection = DmDados.FD_Connect
-    Left = 128
-    Top = 344
-  end
-  object DS_Clients: TDataSource
-    DataSet = FDQueryClient
-    Left = 208
-    Top = 344
   end
 end

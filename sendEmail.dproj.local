@@ -3,16 +3,16 @@
 	<Transactions>
     <Transaction>2021/03/17 14:04:01.000.793,=C:\Users\Biscoito\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>2021/04/30 18:48:39.000.490,=C:\Users\Biscoito\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2021/04/30 18:49:14.000.415,C:\Codes\EmailMsg\uFormMain.pas=C:\Users\Biscoito\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2021/04/30 18:49:14.000.415,C:\Codes\EmailMsg\uFormMain.dfm=C:\Users\Biscoito\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
-    <Transaction>2021/04/30 20:36:13.000.990,C:\Codes\SendEmailDelphi\uFormMain.pas=C:\Codes\EmailMsg\uFormMain.pas</Transaction>
-    <Transaction>2021/04/30 20:36:13.000.990,C:\Codes\SendEmailDelphi\uFormMain.dfm=C:\Codes\EmailMsg\uFormMain.dfm</Transaction>
-    <Transaction>2021/04/30 20:37:04.000.734,C:\Codes\SendEmailDelphi\sendEmail.dproj=C:\Users\Biscoito\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2021/04/30 18:49:14.000.415,C:\Users\Biscoito\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Codes\EmailMsg\uFormMain.pas</Transaction>
+    <Transaction>2021/04/30 18:49:14.000.415,C:\Users\Biscoito\Documents\Embarcadero\Studio\Projects\Unit1.dfm=C:\Codes\EmailMsg\uFormMain.dfm</Transaction>
+    <Transaction>2021/04/30 20:36:13.000.990,C:\Codes\EmailMsg\uFormMain.dfm=C:\Codes\SendEmailDelphi\uFormMain.dfm</Transaction>
+    <Transaction>2021/04/30 20:36:13.000.990,C:\Codes\EmailMsg\uFormMain.pas=C:\Codes\SendEmailDelphi\uFormMain.pas</Transaction>
+    <Transaction>2021/04/30 20:37:04.000.734,C:\Users\Biscoito\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Codes\SendEmailDelphi\sendEmail.dproj</Transaction>
     <Transaction>2021/04/30 21:42:13.000.361,=C:\Codes\SendEmailDelphi\Unit1.pas</Transaction>
-    <Transaction>2021/04/30 21:46:30.000.373,C:\Codes\SendEmailDelphi\Form\uDmDados.dfm=C:\Codes\SendEmailDelphi\Unit1.dfm</Transaction>
-    <Transaction>2021/04/30 21:46:30.000.373,C:\Codes\SendEmailDelphi\Form\uDmDados.pas=C:\Codes\SendEmailDelphi\Unit1.pas</Transaction>
+    <Transaction>2021/04/30 21:46:30.000.373,C:\Codes\SendEmailDelphi\Unit1.pas=C:\Codes\SendEmailDelphi\Form\uDmDados.pas</Transaction>
+    <Transaction>2021/04/30 21:46:30.000.373,C:\Codes\SendEmailDelphi\Unit1.dfm=C:\Codes\SendEmailDelphi\Form\uDmDados.dfm</Transaction>
     <Transaction>2021/05/01 13:51:07.000.165,=C:\Codes\SendEmailDelphi\Unit1.pas</Transaction>
-    <Transaction>2021/05/01 13:59:20.000.941,C:\Codes\SendEmailDelphi\Unit1.pas=C:\Codes\SendEmailDelphi\Unit\uLybrary.pas</Transaction>
+    <Transaction>2021/05/01 13:59:20.000.941,C:\Codes\SendEmailDelphi\Unit\uLybrary.pas=C:\Codes\SendEmailDelphi\Unit1.pas</Transaction>
     <Transaction>2021/05/04 13:38:32.000.396,=C:\Codes\SendEmailDelphi\Unit1.pas</Transaction>
     <Transaction>2021/05/08 15:15:37.000.901,=C:\Codes\SendEmailDelphi\Unit1.pas</Transaction>
   </Transactions>

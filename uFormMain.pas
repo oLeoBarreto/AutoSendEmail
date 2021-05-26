@@ -29,22 +29,17 @@ type
     FDQuerySale: TFDQuery;
     FDTransactionSale: TFDTransaction;
     DS_Sale: TDataSource;
-    FDQueryClient: TFDQuery;
-    FDTransactionClients: TFDTransaction;
-    DS_Clients: TDataSource;
-    FDQueryClientID_CLIENTS: TIntegerField;
-    FDQueryClientEMAIL: TWideStringField;
-    Edt_to: TListBox;
     FDQuerySaleEMAIL: TWideStringField;
+    Edt_to: TEdit;
     procedure Btn_sendClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
     procedure autoSend;
     procedure Email(totarget, subject, body: string);
     procedure LastDay(date: TDate);
-    procedure runBackground(const allUsers: boolean = False);
-    function getEmail: string;
+    //function getEmail: string;
   public
     { Public declarations }
   end;
@@ -61,78 +56,59 @@ implementation
 {$R *.dfm}
 
 { TForm1 }
+procedure TFormMain.FormActivate(Sender: TObject);
+begin
+  lastDay(Date);
+end;
+
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
-  //runBackground(True);
-  LastDay(Date);
+  lastDay(Date);
 end;
-
-function TFormMain.getEmail: string;
-var
-mailBill: array of string;
-begin
-  FDQuerySale.Close;
-  FDQuerySale.SQL.Clear;
-  FDQuerySale.SQL.Add('SELECT C.email FROM sales S JOIN clients C on C.id_clients = S.id_clients WHERE S.billed = ''N'' AND C.id_clients > 0');
-  FDQuerySale.Open;
-  FDQuerySale.First;
-  while not FDQuerySale.Eof do
-  begin
-    SetLength(mailBill, Succ(Length(mailBill)));
-    mailBill[High(mailBill)] := FDQuerySale.FieldByName('email').AsString;
-    mail_to :=  mailBill[High(mailBill)];
-    mail_subject := 'Teste email automatico';
-    mail_body := 'Este e um email automático, por favor nao responda!';
-    try
-      Email(mail_to, mail_subject, mail_body);
-    except
-      ShowMessage('Nao foi possivel enviar o email');
-    end;
-    FDQuerySale.Next;
-  end;
-end;
-
 
 procedure TFormMain.Btn_sendClick(Sender: TObject);
 begin
   autoSend;
 end;
 
+procedure TFormMain.LastDay(date: TDate);
+var
+  lastDay: TDateTime;
+begin
+  lastDay := EndOfTheMonth(Date);
+  if date = strToDate('17/06/21') then
+  begin
+    try
+      autoSend;
+    finally
+      ShowMessage('E-mais enviados aos devedores!');
+    end;
+  end;
+end;
+
 procedure TFormMain.autoSend;
 var
 mailBill: array of string;
 begin
+  mail_subject := Edt_subject.Text;
+  mail_body := Edt_body.Text;
+
   FDQuerySale.Close;
   FDQuerySale.SQL.Clear;
   FDQuerySale.SQL.Add('SELECT C.email FROM sales S JOIN clients C on C.id_clients = S.id_clients WHERE S.billed = ''N'' AND C.id_clients > 0');
   FDQuerySale.Open;
   FDQuerySale.First;
-  while not FDQuerySale.Eof do
+  while not (FDQuerySale.Eof) do
   begin
     SetLength(mailBill, Succ(Length(mailBill)));
     mailBill[High(mailBill)] := FDQuerySale.FieldByName('email').AsString;
     mail_to :=  mailBill[High(mailBill)];
-    mail_subject := 'Teste email automatico';
-    mail_body := 'Este e um email automático, por favor nao responda!';
     try
       Email(mail_to, mail_subject, mail_body);
     except
       ShowMessage('Nao foi possivel enviar o email');
     end;
     FDQuerySale.Next;
-  end;
-end;
-
-procedure TFormMain.LastDay(date: TDate);
-var
-  lastDay: TDateTime;
-  month: Word;
-begin
-  lastDay := EndOfTheMonth(Date);
-  month := MonthOf(Date);
-  if date = lastDay then
-  begin
-    autoSend;
   end;
 end;
 
@@ -151,7 +127,7 @@ begin
   SSL.SSLOptions.VerifyMode := [];
   SSL.SSLOptions.VerifyDepth := 0;
 
-  DATA.From.Address := 'Leonardo Barreto';
+  DATA.From.Address := 'USERNAME';
   DATA.Recipients.EMailAddresses := totarget;
   DATA.subject := subject;
   DATA.body.text := body;
@@ -159,8 +135,8 @@ begin
   SMTP.IOHandler := SSL;
   SMTP.Host := 'smtp.gmail.com';
   SMTP.Port := 587;
-  SMTP.username := 'leobcontato@gmail.com';
-  SMTP.password := 'Leo1br115';
+  SMTP.username := 'EMAIL';
+  SMTP.password := 'SENHA';
   SMTP.UseTLS := utUseExplicitTLS;
 
   SMTP.Connect;
@@ -173,20 +149,6 @@ begin
   SMTP.Free;
   DATA.Free;
   SSL.Free;
-end;
-
-procedure TFormMain.runBackground(const allUsers: boolean = False);
-begin
-  Reg := TRegistry.Create();
-  try
-    Reg.RootKey := byte(allUsers)+$80000001;
-    if Reg.OpenKey('SoftwareMicrosoftWindowsCurrentVersionRun',True) then
-    begin
-      Reg.CloseKey;
-    end;
-  finally
-    Reg.Free;
-  end;
 end;
 
 end.
